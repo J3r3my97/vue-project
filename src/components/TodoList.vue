@@ -1,34 +1,20 @@
 <template>
   <div>
-      <input type="text" class="todo-input" placeholder="What needs to be done" v-model="newTodo" @keyup.enter="addTodo">
+    <input type="text" class="todo-input" placeholder="What needs to be done" v-model="newTodo" @keyup.enter="addTodo">
 
-      <transition-group enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
-      <div v-for="(todo, index) in todosFiltered" :key="todo.id" class="todo-item">
+    <transition-group enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
+      <todo-item v-for="(todo, index) in todosFiltered" :key="todo.id" :todo="todo" :index="index">
 
-          <div class="todo-item-left">
+      </todo-item>
 
-            <input type="checkbox" v-model="todo.completed">
-            
-            <div v-if="!todo.editing" class="todo-item-label" :class="{ completed: todo.completed }" @dblclick="editTodo(todo)">
-              {{ todo.title }}
-            </div>
-
-            <input v-else class="todo-item-edit" type="text" v-model="todo.title" @blur="doneEdit(todo)" @keyup.enter="doneEdit(todo)" @keyup.esc="cancelEdit(todo)" v-focus>
-
-          </div>
-
-          <div class="remove-item" @click="removeTodo(index)">
-              &times;
-          </div>
-      </div>
-      </transition-group>
+    </transition-group>
 
     <div class="extra-container">
       <div><label><input type="checkbox" :checked="!anyRemaining" @change="checkAllTodos"> Check All</label></div>
       <div>{{ remaining }} items left</div>
     </div>
 
-  <div class="extra-container">
+    <div class="extra-container">
       <div>
         <button :class="{ active: filter == 'all' }" @click="filter = 'all'">All</button>
         <button :class="{ active: filter == 'active' }" @click="filter = 'active'">Active</button>
@@ -37,19 +23,23 @@
 
       <div>
         <transition name="fade">
-        <button v-if="showClearCompletedButton" @click="clearCompleted">Clear Completed</button>
+          <button v-if="showClearCompletedButton" @click="clearCompleted">Clear Completed</button>
         </transition>
       </div>
-      
+
     </div>
   </div>
-
 
 </template>
 
 <script>
+import TodoItem from "./TodoItem";
+
 export default {
   name: "todo-list",
+  components: {
+    TodoItem
+  },
   data() {
     return {
       newTodo: "",
@@ -165,7 +155,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  animation-duration: 0.5s
+  animation-duration: 0.5s;
 }
 
 .remove-item {
