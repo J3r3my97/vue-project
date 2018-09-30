@@ -44,7 +44,7 @@ export default {
   },
   methods: {
     removeTodo(id) {
-      eventBus.$emit("TodoRemoved", id);
+      this.$store.commit("deleteTodo", id);
     },
     editTodo() {
       this.editing = true;
@@ -55,7 +55,8 @@ export default {
         this.title = beforeEditCache;
       }
       this.editing = false;
-      eventBus.$emit("EditFinished", {
+
+      this.$store.commit("editTodo", {
         id: this.id,
         title: this.title,
         completed: this.completed,

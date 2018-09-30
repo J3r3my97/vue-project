@@ -14,15 +14,20 @@ export default {
     return {};
   },
   props: {
-    showClearCompletedButton: {
-      type: Boolean,
-      required: true
+    // showClearCompletedButton: {
+    //   type: Boolean,
+    //   required: true
+    // }
+  },
+  computed: {
+    showClearCompletedButton() {
+      return this.$store.getters.showClearCompletedButton;
     }
   },
 
   methods: {
     clearCompleted() {
-      eventBus.$emit("completedTodosCleared");
+      this.$store.commit("clearCompleted");
     }
   }
 };

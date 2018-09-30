@@ -6,14 +6,19 @@
 export default {
   name: "todos-checkall",
   props: {
-    anyRemaining: {
-      type: Boolean,
-      required: true
+    // anyRemaining: {
+    //   type: Boolean,
+    //   required: true
+    // }
+  },
+  computed: {
+    anyRemaining() {
+      return this.$store.getters.anyRemaining;
     }
   },
   methods: {
     checkAllTodos() {
-      eventBus.$emit("checkAllTodos", this.anyRemaining);
+      this.$store.commit("checkAll", event.target.checked);
     }
   }
 };

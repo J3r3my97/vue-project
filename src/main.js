@@ -3,6 +3,8 @@
 import Vue from "vue";
 import App from "./App";
 
+import { store } from "./store/index";
+
 window.eventBus = new Vue();
 
 Vue.config.productionTip = false;
@@ -11,5 +13,6 @@ Vue.config.productionTip = false;
 new Vue({
   el: "#app",
   components: { App },
+  store,
   template: "<App/>"
 });
