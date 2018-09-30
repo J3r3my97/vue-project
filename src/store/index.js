@@ -1,24 +1,12 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import db from "../firebase";
 
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
   state: {
-    todos: [
-      {
-        id: 1,
-        title: "Something",
-        completed: false,
-        editing: false
-      },
-      {
-        id: 2,
-        title: "Hello World!",
-        completed: false,
-        editing: false
-      }
-    ],
+    todos: [],
     filter: "all"
   },
   getters: {
@@ -74,38 +62,107 @@ export const store = new Vuex.Store({
         completed: todo.completed,
         editing: todo.editing
       });
+    },
+    getTodos(state, todos) {
+      state.todos = todos;
     }
   },
   actions: {
     addTodo(context, todo) {
       setTimeout(() => {
-        context.commit("addTodo", todo);
-      }, 1000);
+        db.collection("todos")
+          .add({
+            title: todo.title,
+            completed: false,
+            timestamp: new Date()
+          })
+          .then(docRef => {
+            context.commit("addTodo", {
+              id: docRef.id,
+              title: todo.title,
+              completed: false
+            });
+          });
+      }, 1);
     },
     clearCompleted(context) {
-      setTimeout(() => {
-        context.commit("clearCompleted");
-      }, 1000);
+      db.collection("todos")
+        .where("completed", "==", true)
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            doc.ref.delete().then(() => {
+              context.commit("clearCompleted");
+            });
+          });
+        });
     },
     updateFilter(context, filter) {
       setTimeout(() => {
         context.commit("updateFilter", filter);
-      }, 1000);
+      }, 100);
     },
     checkAll(context, checked) {
-      setTimeout(() => {
-        context.commit("checkAll", checked);
-      }, 1000);
+      db.collection("todos")
+        .get()
+        .then(QuerySnapshot => {
+          QuerySnapshot.forEach(doc => {
+            doc.ref
+              .update({
+                completed: checked
+              })
+              .then(() => {
+                context.commit("checkAll", checked);
+              });
+          });
+        });
     },
     deleteTodo(context, id) {
       setTimeout(() => {
-        context.commit("deleteTodo", id);
-      }, 1000);
+        db.collection("todos")
+          .doc(id)
+          .delete()
+          .then(() => {
+            context.commit("deleteTodo", id);
+          });
+      }, 10);
     },
     editTodo(context, todo) {
       setTimeout(() => {
-        context.commit("editTodo", todo);
-      }, 1000);
+        db.collection("todos")
+          .doc(todo.id)
+          .set({
+            id: todo.id,
+            title: todo.title,
+            completed: todo.completed,
+            timestamp: new Date()
+          })
+          .then(() => {
+            context.commit("editTodo", todo);
+          });
+      }, 100);
+    },
+    getTodos(context) {
+      db.collection("todos")
+        .get()
+        .then(QuerySnapshot => {
+          let temp = [];
+          QuerySnapshot.forEach(doc => {
+            console.log(doc.data());
+            let data = {
+              id: doc.id,
+              title: doc.data().title,
+              completed: doc.data().completed,
+              timestamp: doc.data().timestamp
+            };
+            temp.push(data);
+          });
+
+          let sorted = temp.sort((a, b) => {
+            return a.timestamp.seconds - b.timestamp.seconds;
+          });
+          context.commit("getTodos", sorted);
+        });
     }
   }
 });

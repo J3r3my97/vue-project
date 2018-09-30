@@ -107,6 +107,7 @@ export default {
     }
   },
   created() {
+    this.$store.dispatch("getTodos");
     // event listener 是
     // eventBus.$on("TodoRemoved", id => this.removeTodo(id));
     // eventBus.$on("EditFinished", data => this.finishedEdit(data));
