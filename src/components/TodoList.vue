@@ -2,27 +2,24 @@
   <div>
     <input type="text" class="todo-input" placeholder="What needs to be done" v-model="newTodo" @keyup.enter="addTodo">
     <transition-group name="fade" enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
-      <todo-item v-for="todo in todosFiltered" :key="todo.id" :todo="todo" :checkAll="!anyRemaining" @removedTodo="removeTodo" @finishedEdit="finishedEdit">
+      <todo-item v-for="todo in todosFiltered" :key="todo.id" :todo="todo" :checkAll="!anyRemaining">
       </todo-item>
     </transition-group>
 
     <div class="extra-container">
-      <div><label><input type="checkbox" :checked="!anyRemaining" @change="checkAllTodos"> Check All</label></div>
-      <div>{{ remaining }} items left</div>
+      <!-- component that finishs(checks) all the todos-->
+      <todos-check-all :anyRemaining="anyRemaining"> </todos-check-all>
+      <!-- component that showing the remaining todos on the list  -->
+      <todos-remaining :remaining="remaining"></todos-remaining>
     </div>
 
     <div class="extra-container">
-      <div>
-        <button :class="{ active: filter == 'all' }" @click="filter = 'all'">All</button>
-        <button :class="{ active: filter == 'active' }" @click="filter = 'active'">Active</button>
-        <button :class="{ active: filter == 'completed' }" @click="filter = 'completed'">Completed</button>
-      </div>
 
-      <div>
-        <transition name="fade">
-          <button v-if="showClearCompletedButton" @click="clearCompleted">Clear Completed</button>
-        </transition>
-      </div>
+      <!-- Filters component -->
+      <todos-filter></todos-filter>
+
+      <!-- Clear completed todos component -->
+      <todos-clear-completed :showClearCompletedButton="showClearCompletedButton"></todos-clear-completed>
 
     </div>
   </div>
@@ -31,11 +28,19 @@
 
 <script>
 import TodoItem from "./TodoItem";
+import TodosRemaining from "./TodosRemaining";
+import TodosCheckAll from "./TodosCheckAll";
+import TodosFilter from "./TodosFilter";
+import TodosClearCompleted from "./TodosClearCompleted";
 
 export default {
   name: "todo-list",
   components: {
-    TodoItem
+    TodoItem,
+    TodosRemaining,
+    TodosCheckAll,
+    TodosFilter,
+    TodosClearCompleted
   },
   data() {
     return {
@@ -113,6 +118,22 @@ export default {
         el.focus();
       }
     }
+  },
+  created() {
+    // event listener 是
+    eventBus.$on("TodoRemoved", id => this.removeTodo(id));
+    eventBus.$on("EditFinished", data => this.finishedEdit(data));
+    eventBus.$on("AllTodosChecked", () => this.checkAllTodos());
+    eventBus.$on("filterChanged", filter => (this.filter = filter));
+    eventBus.$on("completedTodosCleared", () => this.clearCompleted());
+  },
+  beforeDestroy() {
+    // delete event listener
+    eventBus.$off("TodoRemoved", id => this.removeTodo(id));
+    eventBus.$off("EditFinished", data => this.finishedEdit(data));
+    eventBus.$off("AllTodosChecked", () => this.checkAllTodos());
+    eventBus.$off("filterChanged", filter => (this.filter = filter));
+    eventBus.$off("completedTodosCleared", () => this.clearCompleted());
   },
 
   computed: {

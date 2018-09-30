@@ -1,19 +1,22 @@
 <template>
   <div class="todo-item">
     <div class="todo-item-left">
-
+      <!-- Checkbox for finish todo -->
       <input type="checkbox" v-model="completed" @change="doneEdit">
-
+      <!-- Normal State  -->
       <div v-if="!editing" class="todo-item-label" :class="{ completed: completed }" @dblclick="editTodo">{{title}}
       </div>
-
+      <!-- Editing State -->
       <input v-else class="todo-item-edit" type="text" v-model="title" @blur="doneEdit" @keyup.enter="doneEdit" @keyup.esc="cancelEdit" v-focus>
 
     </div>
-
-      <div class="remove-item" @click="removeTodo(todo.id)">
-        &times;
+      <div>
+        <button @click="pluralize">Plural</button>
+        <span class="remove-item" @click="removeTodo(todo.id)">
+          &times;
+        </span>
       </div>
+
     </div>
 </template>
 
@@ -41,7 +44,7 @@ export default {
   },
   methods: {
     removeTodo(id) {
-      this.$emit("removedTodo", id);
+      eventBus.$emit("TodoRemoved", id);
     },
     editTodo() {
       this.editing = true;
@@ -52,7 +55,7 @@ export default {
         this.title = beforeEditCache;
       }
       this.editing = false;
-      this.$emit("finishedEdit", {
+      eventBus.$emit("EditFinished", {
         id: this.id,
         title: this.title,
         completed: this.completed,
@@ -62,6 +65,18 @@ export default {
     cancelEdit() {
       this.title = this.beforeEditCache;
       this.editing = false;
+    },
+    pluralize() {
+      eventBus.$emit("pluralize");
+    },
+    handlePluralize() {
+      this.title = this.title + "s";
+      eventBus.$emit("EditFinished", {
+        id: this.id,
+        title: this.title,
+        completed: this.completed,
+        editing: this.editing
+      });
     }
   },
   watch: {
@@ -72,6 +87,12 @@ export default {
         this.completed = this.todo.completed;
       }
     }
+  },
+  created() {
+    eventBus.$on("pluralize", this.handlePluralize);
+  },
+  beforeDestroy() {
+    eventBus.$off("pluralize", this.handlePluralize);
   }
 };
 </script>
