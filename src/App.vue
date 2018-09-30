@@ -3,19 +3,17 @@
     <img src="./assets/logo.png" class="logo">
     <todo-list></todo-list>
 
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
 import TodoList from "./components/TodoList";
-
 
 export default {
   name: "App",
   components: {
-    HelloWorld,
-    TodoList,
+    TodoList
   }
 };
 </script>
@@ -31,7 +29,7 @@ export default {
 .logo {
   display: block;
   margin: 20px auto;
-  height: 75px
+  height: 75px;
 }
 
 #app {
@@ -41,6 +39,6 @@ export default {
   /* text-align: center; */
   color: #2c3e50;
   margin-top: 60px;
-  font-size: 24px
+  font-size: 24px;
 }
 </style>
