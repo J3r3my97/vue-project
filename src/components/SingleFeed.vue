@@ -11,7 +11,9 @@
 
     </div>
       <div>
-        <button @click="pluralize">Plural</button>
+        <button @click="agree">Agree</button>
+        <button @click="disagree">Disagree</button>
+
         <span class="remove-item" @click="removeTodo(todo.id)">
           &times;
         </span>
@@ -22,7 +24,7 @@
 
 <script>
 export default {
-  name: "todo-item",
+  name: "single-feed",
   props: {
     todo: {
       type: Object,
@@ -78,8 +80,11 @@ export default {
         completed: this.completed,
         editing: this.editing
       });
-    }
+    },
+    agree() {},
+    disagree() {}
   },
+
   watch: {
     checkAll() {
       if (this.checkAll) {

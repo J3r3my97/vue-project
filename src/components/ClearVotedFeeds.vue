@@ -1,7 +1,7 @@
 <template>
   <div>
     <transition name="fade">
-      <button v-if="showClearCompletedButton" @click="clearCompleted">Clear Completed</button>
+      <button v-if="showClearCompletedButton" @click="clearCompleted">Clear Voted Feed(s)</button>
     </transition>
   </div>
 
@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "todos-clear-completed",
+  name: "clear-voted-feed",
   data() {
     return {};
   },

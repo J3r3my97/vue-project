@@ -1,10 +1,10 @@
 <template>
-  <div>{{ remaining }} items left</div>
+  <div> You have {{ remaining }} feed(s)</div>
 </template>
 
 <script>
 export default {
-  name: "todos-remaining",
+  name: "feeds-counter",
   computed: {
     remaining() {
       return this.$store.getters.remaining;

@@ -38,7 +38,9 @@ export const store = new Vuex.Store({
         id: todo.id,
         title: todo.title,
         completed: false,
-        editing: false
+        editing: false,
+        agree: 0,
+        disagree: 0
       });
     },
     clearCompleted(state) {
@@ -74,13 +76,17 @@ export const store = new Vuex.Store({
           .add({
             title: todo.title,
             completed: false,
-            timestamp: new Date()
+            timestamp: new Date(),
+            agree: 0,
+            disagree: 0
           })
           .then(docRef => {
             context.commit("addTodo", {
               id: docRef.id,
               title: todo.title,
-              completed: false
+              completed: false,
+              agree: 0,
+              disagree: 0
             });
           });
       }, 1);
@@ -153,7 +159,9 @@ export const store = new Vuex.Store({
               id: doc.id,
               title: doc.data().title,
               completed: doc.data().completed,
-              timestamp: doc.data().timestamp
+              timestamp: doc.data().timestamp,
+              agree: doc.data().agree,
+              disagree: doc.data().disagree
             };
             temp.push(data);
           });
@@ -163,6 +171,11 @@ export const store = new Vuex.Store({
           });
           context.commit("getTodos", sorted);
         });
+    },
+    agree(context) {
+      db.collection("todo")
+        .get()
+        .then(QuerySnapshot => {});
     }
   }
 });

@@ -1,21 +1,53 @@
 <template>
-    <div id='aa'>
-        <ul class='nav'>
-            <li>
-                <router-link to="/">Home</router-link>
-                <router-link to="/todo">Todo</router-link>
-                <router-link to="/login">Login</router-link>
-                <router-link to="/register">Register</router-link>
-                <router-link to="/about">About</router-link>
+  <div id='aa'>
+    <ul class='nav'>
+      <li>
+        <router-link to="/">Home</router-link>
+      </li>
+      <li>
+        <router-link to="/list">List</router-link>
+      </li>
+      <li>
+        <router-link to="/login">Login</router-link>
+      </li>
+      <li>
+        <router-link to="/register">Register</router-link>
+      </li>
+      <li>
+        <router-link to="/about">About</router-link>
+      </li>
+      <li>
+        <button @click="logout" class="btn black">Logout</button>
+      </li>
+    </ul>
+    <!-- Where the different routes showed  -->
+    <router-view></router-view>
+  </div>
 
-            </li>
-
-        </ul>
-        <router-view></router-view>
-    </div>
 </template>
 
-
+<script>
+import firebase from "firebase";
+export default {
+  data() {
+    return {
+      loggedIn: false,
+      currentUser: false
+    };
+  },
+  methods: {
+    logout() {
+      console.log("test");
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.$router.push("/login");
+        });
+    }
+  }
+};
+</script>
 <style>
 * {
   box-sizing: border-box;

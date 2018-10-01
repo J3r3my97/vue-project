@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name: "todos-filter",
+  name: "feeds-filter",
   data() {
     return {};
   },

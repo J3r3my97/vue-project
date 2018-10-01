@@ -1,25 +1,25 @@
 <template>
   <div>
-    <input type="text" class="todo-input" placeholder="What needs to be done" v-model="newTodo" @keyup.enter="addTodo">
+    <input type="text" class="todo-input" placeholder="Add an idea here" v-model="newTodo" @keyup.enter="addTodo">
     <transition-group name="fade" enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
-      <todo-item v-for="todo in todosFiltered" :key="todo.id" :todo="todo" :checkAll="!anyRemaining">
-      </todo-item>
+      <single-feed v-for="todo in todosFiltered" :key="todo.id" :todo="todo" :checkAll="!anyRemaining">
+      </single-feed>
     </transition-group>
 
     <div class="extra-container">
       <!-- component that finishs(checks) all the todos-->
       <todos-check-all> </todos-check-all>
       <!-- component that showing the remaining todos on the list  -->
-      <todos-remaining></todos-remaining>
+      <feeds-counter></feeds-counter>
     </div>
 
     <div class="extra-container">
 
       <!-- Filters component -->
-      <todos-filter></todos-filter>
+      <feeds-filter></feeds-filter>
 
       <!-- Clear completed todos component -->
-      <todos-clear-completed></todos-clear-completed>
+      <clear-voted-feeds></clear-voted-feeds>
 
     </div>
   </div>
@@ -27,41 +27,28 @@
 </template>
 
 <script>
-import TodoItem from "./TodoItem";
-import TodosRemaining from "./TodosRemaining";
+import SingleFeed from "./SingleFeed";
+import FeedsCounter from "./FeedsCounter";
 import TodosCheckAll from "./TodosCheckAll";
-import TodosFilter from "./TodosFilter";
-import TodosClearCompleted from "./TodosClearCompleted";
+import FeedsFilter from "./FeedsFilter";
+import ClearVotedFeeds from "./ClearVotedFeeds";
 
 export default {
-  name: "todo-list",
+  name: "feed-list",
   components: {
-    TodoItem,
-    TodosRemaining,
+    SingleFeed,
+    FeedsCounter,
     TodosCheckAll,
-    TodosFilter,
-    TodosClearCompleted
+    FeedsFilter,
+    ClearVotedFeeds
   },
   data() {
     return {
       newTodo: "",
-      idForTodo: 3,
+      idForTodo: 0,
       beforeEditCache: "",
       filter: "all",
-      todos: [
-        {
-          id: 1,
-          title: "Something",
-          completed: false,
-          editing: false
-        },
-        {
-          id: 2,
-          title: "Hello World!",
-          completed: false,
-          editing: false
-        }
-      ]
+      todos: []
     };
   },
 
@@ -70,12 +57,13 @@ export default {
       if (this.newTodo.trim().length == 0) {
         return;
       }
-
       this.$store.dispatch("addTodo", {
         id: this.idForTodo,
         title: this.newTodo,
         completed: false,
-        editing: false
+        editing: false,
+        agree: 0,
+        disagree: 0
       });
 
       this.newTodo = "";
@@ -99,12 +87,12 @@ export default {
   },
 
   directives: {
-    focus: {
-      // directive definition
-      inserted: function(el) {
-        el.focus();
-      }
-    }
+    // focus: {
+    //   // directive definition
+    //   inserted: function(el) {
+    //     el.focus();
+    //   }
+    // }
   },
   created() {
     this.$store.dispatch("getTodos");

@@ -1,19 +1,19 @@
 <template>
   <div id="app" class="container">
-    <img src="./assets/logo.png" class="logo">
-    <todo-list></todo-list>
+    <!-- <img src="./assets/logo.png" class="logo"> -->
+    <feed-list></feed-list>
 
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import TodoList from "./components/TodoList";
+import FeedList from "./components/Feedlist";
 
 export default {
   name: "App",
   components: {
-    TodoList
+    FeedList
   }
 };
 </script>
